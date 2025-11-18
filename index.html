@@ -229,38 +229,26 @@
         }
         /* --- FIN DE ESTILOS DE FONDO --- */
 
-        /* --- ESTILOS DE MODAL DE ERROR --- */
+        /* --- MODIFICADO: ESTILOS DE MODAL DE ERROR (MODERNO) --- */
         .modal-overlay {
             display: none; /* Oculto por defecto */
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
+            /* Fondo oscuro semitransparente con desenfoque */
+            background-color: rgba(10, 0, 20, 0.6);
+            backdrop-filter: blur(5px);
             z-index: 1000;
+            /* Usar flex para centrar */
             justify-content: center;
             align-items: center;
+            
+            /* Animación de aparición */
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
         }
-        .modal-window {
-            background-color: #ECE9D8;
-            border: 1px solid #000;
-            box-shadow: 3px 3px 8px rgba(0,0,0,0.5);
-            width: 350px;
-            font-family: 'Tahoma', Arial, sans-serif;
-            font-size: 11px;
-        }
-        .modal-body {
-            padding: 20px;
-            text-align: center;
-        }
-        .modal-body p {
-            margin-bottom: 20px;
-            font-size: 12px;
-        }
-        /* Usar el footer-bar para el botón */
-        .modal-window .footer-bar {
-            padding: 8px 10px;
-            justify-content: center;
-            background-color: #D6D6C8;
-            border-top: 1px solid #ACA899;
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
         }
 
         /* --- NUEVO: Animación de entrada (Fade-in) --- */
@@ -793,21 +781,43 @@
     </div>
 
    
-    <!-- MODAL DE ERROR (NUEVO) -->
+    <!-- MODAL DE ERROR (MODIFICADO A ESTILO MODERNO) -->
     <div id="error-modal" class="modal-overlay">
-        <div class="modal-window">
-            <!-- Barra de Título (simulada) -->
-            <div class="window-title-bar">
-                <h1>Error de validación</h1>
-                <div class="window-controls">
-                    <span>X</span>
-                </div>
+        <!-- 
+            Contenedor de la ventana modal moderna.
+            Utiliza las clases de la pantalla de inicio:
+            - bg-gray-900/80 (fondo oscuro)
+            - backdrop-blur-sm (desenfoque)
+            - rounded-xl (bordes redondeados)
+            - border border-violet-700 (borde violeta)
+            - text-white (texto blanco)
+        -->
+        <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-6 max-w-sm w-full border border-violet-700 text-white fade-in-card">
+            
+            <!-- Título del Modal -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-violet-300">Error de Validación</h2>
+                <!-- Icono de "X" para cerrar (opcional, la lógica la tiene el botón) -->
+                <svg onclick="cerrarError()" class="w-6 h-6 text-gray-400 hover:text-white cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
             </div>
-            <div class="modal-body">
-                <p id="error-message">Mensaje de error irá aquí.</p>
-                <div class="footer-bar" style="border-top: none;">
-                    <button class="btn-classic" onclick="cerrarError()">Aceptar</button>
-                </div>
+
+            <!-- Cuerpo del Mensaje -->
+            <div class="modal-body-modern mb-6">
+                <p id="error-message" class="text-violet-100">Mensaje de error irá aquí.</p>
+            </div>
+            
+            <!-- Pie de página con Botón Moderno -->
+            <div class="flex justify-end">
+                <!-- 
+                    Botón "Aceptar" con el mismo estilo de la pantalla de inicio, 
+                    pero un poco más pequeño.
+                -->
+                <button onclick="cerrarError()" 
+                        class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-violet-300">
+                    Aceptar
+                </button>
             </div>
         </div>
     </div>
@@ -828,7 +838,7 @@
              
              dateFields.forEach(field => {
                  if (field && (field.value === 'dd/mm/aaaa' || field.value === '')) {
-                     field.value = formattedDate;
+                     field.Svalue = formattedDate;
                  }
              });
         });
@@ -860,20 +870,22 @@
             }
         }
 
-        // --- NUEVAS FUNCIONES PARA MODAL DE ERROR ---
+        // --- MODIFICADO: FUNCIONES PARA MODAL MODERNO ---
         function mostrarError(mensaje) {
             const modal = document.getElementById('error-modal');
             const messageP = document.getElementById('error-message');
             if (modal && messageP) {
                 messageP.textContent = mensaje;
-                modal.style.display = 'flex'; // Usamos flex para centrar
+                // Añadimos la clase 'active' para mostrarlo con la transición
+                modal.classList.add('active');
             }
         }
 
         function cerrarError() {
             const modal = document.getElementById('error-modal');
             if (modal) {
-                modal.style.display = 'none';
+                // Quitamos la clase 'active' para ocultarlo
+                modal.classList.remove('active');
             }
         }
         // --- FIN DE FUNCIONES DE MODAL ---
