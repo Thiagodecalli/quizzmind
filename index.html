@@ -18,7 +18,6 @@
         }
         
         /* Contenedor de la ventana de aplicación */
-        /* MODIFICADO: Añadido #habilitacion-view-container */
         #consultar-view-container, #registro-view-container, #habilitacion-view-container {
             font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
             font-size: 11px;
@@ -27,6 +26,8 @@
             width: 800px; 
             margin: 2rem auto;
             box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+            /* AÑADIDO: Posición relativa para el menú contextual */
+            position: relative; 
         }
 
         /* Barra de título azul */
@@ -54,12 +55,17 @@
             height: 18px;
             background-color: #ECE9D8;
             border: 1px solid #666;
-            font-family: 'Webdings', 'Marlett';
-            font-size: 12px;
-            text-align: center;
-            line-height: 18px;
             cursor: default;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .window-controls span svg {
+            width: 11px; 
+            height: 11px;
+            stroke: #333; 
+        }
+
 
         .window-body {
             padding: 10px;
@@ -84,12 +90,11 @@
             align-items: center;
             gap: 10px;
         }
-        /* Estilo para la leyenda (título del fieldset) */
         .filter-fieldset legend {
             font-weight: bold;
             margin-left: 10px;
             padding: 0 4px;
-            background-color: #ECE9D8; /* Debe coincidir con el fondo */
+            background-color: #ECE9D8; 
         }
 
         .filter-group {
@@ -111,7 +116,6 @@
         .input-text {
             min-width: 80px;
         }
-        /* Input de solo lectura */
         .input-readonly {
              background-color: #F0F0F0;
         }
@@ -137,11 +141,11 @@
         /* Contenedor de la tabla con scroll */
         .table-container {
             border: 1px solid #7F9DB9;
-            max-height: 300px; /* Altura para forzar el scroll */
+            max-height: 300px; 
             overflow-y: scroll;
             background-color: #FFFFFF;
             margin-bottom: 10px;
-            width: 100%; /* Asegura que ocupe todo el fieldset */
+            width: 100%; 
         }
         table {
             width: 100%;
@@ -152,15 +156,42 @@
             padding: 4px 6px;
             white-space: nowrap;
             text-align: left;
+            /* AÑADIDO: para mostrar/ocultar columnas */
+            transition: all 0.2s;
         }
         th {
-            background-color: #D6D6C8; /* Cabecera de tabla más gris */
+            background-color: #D6D6C8; 
             font-weight: bold;
             position: sticky;
             top: 0;
             border-bottom: 1px solid #ACA899;
             z-index: 10;
         }
+        /* --- AÑADIDO: Estilos de Ordenamiento (Click Izquierdo) --- */
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        th.sortable:hover {
+            background-color: #C8C8B8;
+        }
+        /* Contenedor para el título y el ícono */
+        .th-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 4px;
+        }
+        .sort-icon {
+            width: 12px;
+            height: 12px;
+            opacity: 0.5;
+        }
+        th.sorted-asc .sort-icon.asc,
+        th.sorted-desc .sort-icon.desc {
+            opacity: 1;
+        }
+        
         td.col-visualizar a {
             color: blue;
             text-decoration: underline;
@@ -185,7 +216,7 @@
             border: 1px solid #ACA899; 
             padding: 10px; 
             margin-top: 15px;
-            background-color: #F0F0E8; /* Ligero cambio de color para el área de edición */
+            background-color: #F0F0E8; 
         }
         .question-row {
             display: flex;
@@ -200,49 +231,34 @@
              font-weight: bold;
         }
         .field-label {
-            width: 80px; /* Ancho fijo para etiquetas de campo */
+            width: 80px; 
             text-align: right;
         }
 
         /* --- NUEVO: Estilos de Fondo Dinámico --- */
         @keyframes dynamicBackground {
-            0% {
-                background-position: 50% 50%;
-                background-size: 100% 100%;
-            }
-            50% {
-                background-position: 40% 60%;
-                background-size: 110% 110%; /* Zoom suave */
-            }
-            100% {
-                background-position: 50% 50%;
-                background-size: 100% 100%;
-            }
+            0% { background-position: 50% 50%; background-size: 100% 100%; }
+            50% { background-position: 40% 60%; background-size: 110% 110%; }
+            100% { background-position: 50% 50%; background-size: 100% 100%; }
         }
         .dynamic-bg {
             background-image: url('https://www.shutterstock.com/image-illustration/ai-brain-artificial-intelligence-neural-600nw-2614012815.jpg'); 
             background-size: 100% 100%; 
             background-position: center; 
             background-attachment: fixed;
-            /* Aplicar la animación: 40s de duración, suave, infinita */
             animation: dynamicBackground 40s ease-in-out infinite;
         }
-        /* --- FIN DE ESTILOS DE FONDO --- */
 
         /* --- MODIFICADO: ESTILOS DE MODAL DE ERROR (MODERNO) --- */
         .modal-overlay {
-            display: none; /* Oculto por defecto */
+            display: none; 
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            /* Fondo oscuro semitransparente con desenfoque */
             background-color: rgba(10, 0, 20, 0.6);
             backdrop-filter: blur(5px);
             z-index: 1000;
-            /* Usar flex para centrar */
             justify-content: center;
             align-items: center;
-            
-            /* Animación de aparición */
             opacity: 0;
             transition: opacity 0.3s ease-out;
         }
@@ -253,47 +269,63 @@
 
         /* --- NUEVO: Animación de entrada (Fade-in) --- */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px); /* Sutilmente desde abajo */
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .fade-in-card {
-            /* Aplica la animación */
             animation: fadeIn 0.8s ease-out forwards;
         }
+        
+        /* --- AÑADIDO: Estilos del Menú Contextual (Click Derecho) --- */
+        #column-context-menu {
+            display: none;
+            position: absolute;
+            z-index: 1001; /* Encima del modal de error si es necesario */
+            background-color: #F0F0F0;
+            border: 1px solid #7F9DB9;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            font-family: 'Tahoma', sans-serif;
+            font-size: 11px;
+            padding: 4px 0;
+        }
+        #column-context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        #column-context-menu li {
+            padding: 4px 10px 4px 25px; /* Espacio para el check */
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+        #column-context-menu li:hover {
+            background-color: #A6CAF0;
+            color: #000;
+        }
+        #column-context-menu li.checked::before {
+            content: '✓'; /* Checkmark */
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            font-weight: bold;
+        }
+
 
     </style>
 </head>
-<!-- MODIFICADO: Eliminado el 'style' en línea y añadida la clase 'dynamic-bg' -->
 <body class="bg-violet-100 font-sans dynamic-bg">
 
     
 <!-- VISTA DE INICIO (Simple) -->
     <div id="inicio-view" class="view active">
         <div class="min-h-screen flex flex-col items-center justify-center text-center p-8">
-            <!-- 
-                MODIFICADO: 
-                - Vuelve a tener el padding 'p-10'
-                - Eliminado 'overflow-hidden' de este contenedor
-            -->
             <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-10 max-w-xl w-full border border-violet-700 fade-in-card">
                 
-                <!-- 
-                    MODIFICADO: Logo circular 
-                    - Se re-introduce el logo circular, centrado (mx-auto)
-                    - Se coloca antes del H1 (título)
-                -->
                 <div class="h-32 w-32 rounded-full shadow-xl mb-6 mx-auto border-4 border-violet-400 bg-gray-900 overflow-hidden">
-                    <!-- MODIFICADO: Corregida la URL (faltaban los dos puntos //) -->
                     <img src="https://raw.githubusercontent.com/Thiagodecalli/quizzmind/main/imagenproyecto.png" alt="Logo QuizMind" class="w-full h-full object-cover">
                 </div>
                 
-                <!-- MODIFICADO: Título con gradiente -->
                 <h1 class="text-5xl font-extrabold mb-4 tracking-wider bg-gradient-to-r from-violet-400 to-purple-300 text-transparent bg-clip-text">QuizzMind</h1>
                 <p class="text-lg text-violet-200 mb-10 max-w-md mx-auto">
                     Un Cambio en el estudio haciéndolo un poco más autodidacta y mejorando la medida de 
@@ -302,11 +334,9 @@
                 
                 <button onclick="navigateTo('consultar')" 
                         class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 text-lg uppercase tracking-wider focus:outline-none focus:ring-4 focus:ring-violet-300
-                               inline-flex items-center justify-center"> <!-- MODIFICADO: Clases flex añadidas -->
-                    <!-- MODIFICADO: Contenido del botón con icono SVG -->
+                               inline-flex items-center justify-center"> 
                     <span class="inline-flex items-center">
                         Consultar Cuestionarios Incrementales
-                        <!-- Icono de flecha (SVG) -->
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 ml-3">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                         </svg>
@@ -320,39 +350,33 @@
     <!-- VISTA DE CONSULTA -->
     <div id="consultar-view" class="view">
         
-        <!-- Botón para volver al inicio -->
         <div class="text-center mt-4">
              <button onclick="navigateTo('inicio')" class="text-sm text-violet-600 hover:underline">&larr; Volver al Inicio</button>
         </div>
         
-        <!-- Contenedor de la Ventana -->
         <div id="consultar-view-container">
-            <!-- Barra de Título -->
             <div class="window-title-bar">
                 <h1>Consultar cuestionarios incrementales</h1>
                 <div class="window-controls">
-                    <span>_</span><span>&#9633;</span><span>X</span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 2.25h19.5v19.5H2.25V2.25z" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></span>
                 </div>
             </div>
 
-            <!-- Cuerpo de la Ventana -->
             <div class="window-body">
                 
-                <!-- CAMPOS DE INFO (Fecha y Usuario) -->
                 <div class="info-fields">
                     <div class="filter-group">
                         <label for="f-fecha">Fecha:</label>
-                        <!-- MODIFICADO: Campo de solo lectura -->
                         <input type="text" id="f-fecha" class="input-text input-readonly" value="dd/mm/aaaa" style="width: 70px;" readonly>
                     </div>
                     <div class="filter-group">
                         <label for="f-usuario">Usuario:</label>
-                        <!-- MODIFICADO: Campo de solo lectura -->
                         <input type="text" id="f-usuario" class="input-text input-readonly" value="UsuarioActual" readonly>
                     </div>
                 </div>
 
-                <!-- Filtros -->
                 <fieldset class="filter-fieldset">
                     <div class="filter-group">
                         <label for="f-materia">Materia:</label>
@@ -363,7 +387,6 @@
                             <option value="literatura">Literatura</option>
                         </select>
                     </div>
-
                     <div class="filter-group">
                         <label for="f-unidad">Unidad:</label>
                         <select id="f-unidad" class="input-select" style="width: 70px;">
@@ -374,7 +397,6 @@
                             <option value="U-04">U-04</option>
                         </select>
                     </div>
-                    
                     <div class="filter-group">
                         <label for="f-tipo">Tipo incremento:</label>
                         <select id="f-tipo" class="input-select" style="width: 100px;">
@@ -383,7 +405,6 @@
                             <option>Final</option>
                         </select>
                     </div>
-
                     <div class="filter-group">
                         <label for="f-ordenar">Ordenar:</label>
                         <select id="f-ordenar" class="input-select" style="width: 100px;">
@@ -396,57 +417,114 @@
                     </div>
                 </fieldset>
 
-                <!-- Tabla -->
+                <!-- 
+                  MODIFICADO: Tabla de Consulta 
+                  - Añadidos 'data-col' a th/td para vincularlos
+                  - Añadidos 'th' con 'onclick' y 'oncontextmenu'
+                  - Añadida estructura .th-content para íconos de orden
+                -->
                 <div class="table-container">
-                    <table>
+                    <table id="consultar-tabla">
                         <thead>
                             <tr>
-                                <th>Número</th>
-                                <th>Unidad</th>
-                                <th>Tipo Incremento</th>
-                                <th>Estado</th>
-                                <th>Fecha Creación</th>
-                                <th>Cantidad Preguntas</th>
-                                <th>Visualizar</th>
-                                <th class="col-seleccion">Selección</th>
+                                <th class="sortable" data-col="numero" onclick="sortTable(this, 0)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Número</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-col="unidad" onclick="sortTable(this, 1)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Unidad</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-col="tipo" onclick="sortTable(this, 2)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Tipo Incremento</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-col="estado" onclick="sortTable(this, 3)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Estado</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-col="fecha" onclick="sortTable(this, 4)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Fecha Creación</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="sortable" data-col="cantidad" onclick="sortTable(this, 5)" oncontextmenu="showColumnMenu(event)">
+                                    <div class="th-content">
+                                        <span>Cantidad Preguntas</span>
+                                        <span class="sort-icon-container">
+                                            <svg class="sort-icon asc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" /></svg>
+                                            <svg class="sort-icon desc" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th data-col="visualizar" oncontextmenu="showColumnMenu(event)">Visualizar</th>
+                                <th class="col-seleccion" data-col="seleccion" oncontextmenu="showColumnMenu(event)">Selección</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>1001</td> <td>U-01</td> <td>Formativo</td> <td>Sin completar</td> <td>10/11/2025</td> <td>10</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1002</td> <td>U-02</td> <td>Formativo</td> <td>Completado</td> <td>11/11/2025</td> <td>5</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1003</td> <td>U-01</td> <td>Formativo</td> <td>Sin completar</td> <td>12/11/2025</td> <td>8</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1004</td> <td>U-03</td> <td>Formativo</td> <td>Sin completar</td> <td>12/11/2025</td> <td>10</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1005</td> <td>U-02</td> <td>Formativo</td> <td>Sin completar</td> <td>13/11/2025</td> <td>6</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1006</td> <td>U-04</td> <td>Formativo</td> <td>Completado</td> <td>13/11/2025</td> <td>12</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1007</td> <td>U-01</td> <td>Formativo</td> <td>Sin completar</td> <td>14/11/2025</td> <td>15</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1008</td> <td>U-03</td> <td>Formativo</td> <td>Completado</td> <td>15/11/2025</td> <td>7</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1009</td> <td>U-04</td> <td>Formativo</td> <td>Sin completar</td> <td>16/11/2025</td> <td>10</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1010</td> <td>U-01</td> <td>Formativo</td> <td>Sin completar</td> <td>17/11/2025</td> <td>9</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1011</td> <td>U-02</td> <td>Formativo</td> <td>Sin completar</td> <td>18/11/2025</td> <td>11</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
-                            <tr><td>1012</td> <td>U-03</td> <td>Formativo</td> <td>Completado</td> <td>19/11/2025</td> <td>5</td> <td class="col-visualizar"><a>Ver</a></td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <!-- Datos de ejemplo con data-col -->
+                            <tr><td data-col="numero">1001</td> <td data-col="unidad">U-01</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">10/11/2025</td> <td data-col="cantidad">10</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1002</td> <td data-col="unidad">U-02</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Completado</td> <td data-col="fecha">11/11/2025</td> <td data-col="cantidad">5</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1003</td> <td data-col="unidad">U-01</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">12/11/2025</td> <td data-col="cantidad">8</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1004</td> <td data-col="unidad">U-03</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">12/11/2025</td> <td data-col="cantidad">10</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1005</td> <td data-col="unidad">U-02</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">13/11/2025</td> <td data-col="cantidad">6</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1006</td> <td data-col="unidad">U-04</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Completado</td> <td data-col="fecha">13/11/2025</td> <td data-col="cantidad">12</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1007</td> <td data-col="unidad">U-01</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">14/11/2025</td> <td data-col="cantidad">15</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1008</td> <td data-col="unidad">U-03</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Completado</td> <td data-col="fecha">15/11/2025</td> <td data-col="cantidad">7</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1009</td> <td data-col="unidad">U-04</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">16/11/2025</td> <td data-col="cantidad">10</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1010</td> <td data-col="unidad">U-01</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">17/11/2025</td> <td data-col="cantidad">9</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1011</td> <td data-col="unidad">U-02</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Sin completar</td> <td data-col="fecha">18/11/2025</td> <td data-col="cantidad">11</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
+                            <tr><td data-col="numero">1012</td> <td data-col="unidad">U-03</td> <td data-col="tipo">Formativo</td> <td data-col="estado">Completado</td> <td data-col="fecha">19/11/2025</td> <td data-col="cantidad">5</td> <td data-col="visualizar" class="col-visualizar"><a>Ver</a></td> <td data-col="seleccion" class="col-seleccion"><input type="checkbox" onchange="updateTotalSelected()"></td></tr>
                         </tbody>
                     </table>
                 </div>
 
-               <!-- Barra de Total y Botón Habilitación -->
-                <div class="total-bar flex justify-between items-center mb-4">
+               <div class="total-bar flex justify-between items-center mb-4">
                     <div class="filter-group">
                         <label for="f-total">Total de incrementos seleccionados:</label>
                         <input type="text" id="f-total" class="input-text input-readonly" value="0" readonly style="width: 40px;">
                     </div>
-                    <!-- MODIFICADO: onclick llama a la validación -->
                     <button class="btn-classic" onclick="validarYHabilitar()">Registrar habilitación de cuestionario incremental</button>
                 </div>
 
-                <!-- Barra de Pie de página -->
                 <div class="footer-bar">
                     <button class="btn-classic" onclick="navigateTo('inicio')">Salir</button>
-                    <!-- MODIFICADO: Navega a la nueva vista de registro -->
                     <button class="btn-classic" style="font-weight: bold;" onclick="navigateTo('registro')">Registrar nuevo cuestionario incremental</button>
-		    
                 </div>
 
             </div>
+            
+            <!-- AÑADIDO: Menú Contextual (Oculto) -->
+            <div id="column-context-menu">
+                <ul id="column-menu-list">
+                    <!-- Las columnas se generarán aquí por JS -->
+                </ul>
+            </div>
+            
         </div>
     </div>	
 
@@ -454,41 +532,35 @@
     <!-- VISTA DE REGISTRO (Registro nuevo cuestionario incremental) -->
     <div id="registro-view" class="view">
         
-        <!-- Botón para volver al inicio -->
         <div class="text-center mt-4">
              <button onclick="navigateTo('consultar')" class="text-sm text-violet-600 hover:underline">&larr; Volver a Consultar</button>
         </div>
         
         <div id="registro-view-container">
-            <!-- Barra de Título -->
             <div class="window-title-bar">
                 <h1>Registrar nuevo cuestionario incremental</h1>
                 <div class="window-controls">
-                    <span>_</span><span>&#9633;</span><span>X</span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 2.25h19.5v19.5H2.25V2.25z" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></span>
                 </div>
             </div>
 
-            <!-- Cuerpo de la Ventana -->
             <div class="window-body">
                 
-                <!-- CAMPOS DE INFO (Fecha y Usuario) -->
                 <div class="info-fields">
                     <div class="filter-group">
                         <label for="r-fecha">Fecha:</label>
-                        <!-- MODIFICADO: Campo de solo lectura -->
                         <input type="text" id="r-fecha" class="input-text input-readonly" value="dd/mm/aaaa" style="width: 70px;" readonly>
                     </div>
                     <div class="filter-group">
                         <label for="r-usuario">Usuario:</label>
-                        <!-- MODIFICADO: Campo de solo lectura -->
                         <input type="text" id="r-usuario" class="input-text input-readonly" value="UsuarioActual" readonly>
                     </div>
                 </div>
 
-                <!-- FORMULARIO PRINCIPAL Y DINÁMICO -->
                 <div class="flex flex-col gap-4">
                     
-                    <!-- Fila 1: Título e Tipo Incremento -->
                     <div class="flex gap-4">
                          <div class="filter-group flex-1">
                             <label for="r-titulo-incremento">Título Incremento:</label>
@@ -503,13 +575,9 @@
                         </div>
                     </div>
 
-
-                    <!-- CONTENIDO DINÁMICO (Banco de preguntas o Cuestionarios Completados) -->
                     <div id="dynamic-content">
-                        <!-- Contenido por defecto (Formativo) -->
                         <div id="formativo-section" class="filter-fieldset" style="display: block; gap: 0;">
                             <div class="font-bold mb-2">Banco de preguntas</div>
-                            <!-- Filtros del Banco -->
                             <div class="flex gap-4 mb-3 items-center">
                                 <div class="filter-group">
                                     <label for="r-unidad">Unidad:</label>
@@ -528,7 +596,6 @@
                                 <button class="btn-classic">Buscar</button>
                             </div>
                             
-                            <!-- Tabla de preguntas del Banco -->
                             <div class="table-container" style="max-height: 150px;">
                                 <table>
                                     <thead>
@@ -540,8 +607,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="bank-questions-body">
-                                        <!-- Preguntas de ejemplo Formativo -->
-                                        <!-- MODIFICADO: Añadidos data-attributes a los checkbox -->
                                         <tr><td>1</td> <td>¿Qué es la dilatación térmica?</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="1" data-pregunta="¿Qué es la dilatación térmica?" onchange="updateTotalQuestions()"></td></tr>
                                         <tr><td>2</td> <td>Defina el Teorema de Pitágoras.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="2" data-pregunta="Defina el Teorema de Pitágoras." onchange="updateTotalQuestions()"></td></tr>
                                         <tr><td>3</td> <td>Leyes de Newton.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="3" data-pregunta="Leyes de Newton." onchange="updateTotalQuestions()"></td></tr>
@@ -553,11 +618,9 @@
                             
                         </div>
                         
-                        <!-- Contenido para Final (Oculto por defecto) -->
                         <div id="final-section" class="filter-fieldset" style="display: none; flex-direction: column; gap: 0;">
                             <div class="font-bold mb-2">Cuestionarios Completados (Fuente de preguntas con mayor error)</div>
                             
-                            <!-- Tabla de Cuestionarios Completados -->
                             <div class="table-container" style="max-height: 150px;">
                                 <table>
                                     <thead>
@@ -570,7 +633,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="completed-quizzes-body">
-                                        <!-- Cuestionarios de ejemplo Final -->
                                         <tr><td>1002</td> <td>U-02</td> <td>11/11/2025</td> <td>65%</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions(true)"></td></tr>
                                         <tr><td>1008</td> <td>U-03</td> <td>15/11/2025</td> <td>80%</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions(true)"></td></tr>
                                         <tr><td>1012</td> <td>U-03</td> <td>19/11/2025</td> <td>45%</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions(true)"></td></tr>
@@ -584,7 +646,6 @@
                     </div>
 
 
-                    <!-- Fila 2: Totales, Calificación y Opciones de Preguntas -->
                     <div class="flex flex-col gap-2 p-2" style="border: 1px dashed #C0C0C0;">
                         <div class="flex gap-10 items-center">
                             <div class="filter-group">
@@ -621,27 +682,21 @@
                     </div>
 
 
-                    <!-- ÁREA DE EDICIÓN DE PREGUNTAS (Visible solo tras "Crear") -->
-                    <!-- MODIFICADO: Se quitan las preguntas estáticas y se añade un contenedor dinámico -->
                     <div id="question-editor" class="question-editor-container" style="display:none;">
                         <div class="font-bold text-base mb-2">Detalle de Preguntas Generadas:</div>
                         
-                        <!-- El contenido se generará dinámicamente aquí -->
                         <div id="dynamic-question-list" style="max-height: 350px; overflow-y: auto; padding-right: 5px; border: 1px solid #C0C0C0; padding: 5px; background-color: #F8F8F0;">
                             <!-- Las preguntas generadas por JS irán aquí -->
                         </div>
 
-                        <!-- Botones de Acción -->
                         <div class="flex justify-end gap-2 mt-4">
                             <button class="btn-classic" onclick="toggleQuestionEditor(true)">Cancelar</button>
                             <button class="btn-classic" style="font-weight: bold; background-color: #B2D8B2;">Confirmar</button>
                         </div>
                     </div>
 
-
                 </div>
                 
-                <!-- Barra de Pie de página -->
                 <div class="footer-bar mt-4">
                     <button class="btn-classic" onclick="navigateTo('inicio')">Salir</button>
                     <button class="btn-classic" style="font-weight: bold;">confirmar registracion nuevo cuestionario incremental</button>
@@ -655,25 +710,22 @@
     <!-- VISTA DE HABILITACIÓN (NUEVA) -->
     <div id="habilitacion-view" class="view">
         
-        <!-- Botón para volver al inicio -->
         <div class="text-center mt-4">
              <button onclick="navigateTo('consultar')" class="text-sm text-violet-600 hover:underline">&larr; Volver a Consultar</button>
         </div>
         
-        <!-- Contenedor de la Ventana -->
         <div id="habilitacion-view-container">
-            <!-- Barra de Título -->
             <div class="window-title-bar">
                 <h1>Registrar habilitación de cuestionario incremental</h1>
                 <div class="window-controls">
-                    <span>_</span><span>&#9633;</span><span>X</span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 2.25h19.5v19.5H2.25V2.25z" /></svg></span>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg></span>
                 </div>
             </div>
 
-            <!-- Cuerpo de la Ventana -->
             <div class="window-body">
                 
-                <!-- 1. Cuestionario Seleccionado -->
                 <fieldset class="filter-fieldset">
                     <legend>Cuestionario seleccionado</legend>
                     <div class="filter-group">
@@ -690,10 +742,8 @@
                     </div>
                 </fieldset>
 
-                <!-- Contenedor de dos columnas (Flex) -->
                 <div class="flex flex-wrap md:flex-nowrap gap-4">
                 
-                    <!-- Columna Izquierda: Configuración General -->
                     <div class="flex-1 w-full md:w-1/2">
                         <fieldset class="filter-fieldset" style="height: 100%; flex-direction: column; align-items: flex-start;">
                             <legend>Configuración General</legend>
@@ -710,7 +760,6 @@
                         </fieldset>
                     </div>
                     
-                    <!-- Columna Derecha: Detalles y Validez -->
                     <div class="flex-1 w-full md:w-1/2 flex flex-col gap-3">
                         <fieldset class="filter-fieldset" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                             <legend>Detalles de Habilitación</legend>
@@ -720,11 +769,11 @@
                             </div>
                             <div class="filter-group">
                                 <label style="width: 110px;">Fecha de Habilitación:</label>
-                                <input type="text" class="input-text" value="13/11/2025" style="width: 80px;"> <!-- Simular datepicker -->
+                                <input type="text" class="input-text" value="13/11/2025" style="width: 80px;"> 
                             </div>
                              <div class="filter-group">
                                 <label style="width: 110px;">Horario Habilitación:</label>
-                                <input type="text" class="input-text" value="09:00" style="width: 50px;"> <!-- Simular timepicker -->
+                                <input type="text" class="input-text" value="09:00" style="width: 50px;"> 
                             </div>
                         </fieldset>
                         
@@ -742,7 +791,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Preguntas del cuestionario -->
                  <fieldset class="filter-fieldset mt-3" style="flex-direction: column;">
                     <legend>Preguntas del cuestionario</legend>
                     <div class="table-container" style="max-height: 200px; margin-bottom: 0;">
@@ -756,7 +804,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Datos de ejemplo de la imagen -->
                                 <tr><td>1</td><td>¿Qué es el Big Bang?</td><td>Expansión inicial del universo.</td><td>Activa</td></tr>
                                 <tr><td>2</td><td>Capital de Chile.</td><td>Santiago.</td><td>Activa</td></tr>
                                 <tr><td>3</td><td>Fórmula del agua.</td><td>H2O</td><td>Activa</td></tr>
@@ -770,7 +817,6 @@
                     </div>
                 </fieldset>
 
-                <!-- Barra de Pie de página -->
                 <div class="footer-bar">
                     <button class="btn-classic" onclick="navigateTo('consultar')">Cancelar</button>
                     <button class="btn-classic" style="font-weight: bold;">Registrar confirmacion de habilitacion de cuestionario incremental</button>
@@ -783,37 +829,20 @@
    
     <!-- MODAL DE ERROR (MODIFICADO A ESTILO MODERNO) -->
     <div id="error-modal" class="modal-overlay">
-        <!-- 
-            Contenedor de la ventana modal moderna.
-            Utiliza las clases de la pantalla de inicio:
-            - bg-gray-900/80 (fondo oscuro)
-            - backdrop-blur-sm (desenfoque)
-            - rounded-xl (bordes redondeados)
-            - border border-violet-700 (borde violeta)
-            - text-white (texto blanco)
-        -->
         <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-6 max-w-sm w-full border border-violet-700 text-white fade-in-card">
             
-            <!-- Título del Modal -->
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold text-violet-300">Error de Validación</h2>
-                <!-- Icono de "X" para cerrar (opcional, la lógica la tiene el botón) -->
                 <svg onclick="cerrarError()" class="w-6 h-6 text-gray-400 hover:text-white cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
             </div>
 
-            <!-- Cuerpo del Mensaje -->
             <div class="modal-body-modern mb-6">
                 <p id="error-message" class="text-violet-100">Mensaje de error irá aquí.</p>
             </div>
             
-            <!-- Pie de página con Botón Moderno -->
             <div class="flex justify-end">
-                <!-- 
-                    Botón "Aceptar" con el mismo estilo de la pantalla de inicio, 
-                    pero un poco más pequeño.
-                -->
                 <button onclick="cerrarError()" 
                         class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-violet-300">
                     Aceptar
@@ -825,6 +854,20 @@
      
     <!-- JavaScript para Lógica de Vistas y Dinámicas -->
     <script>
+        // Objeto global para el estado de la tabla
+        const tableState = {
+            columnVisibility: {
+                numero: true,
+                unidad: true,
+                tipo: true,
+                estado: true,
+                fecha: true,
+                cantidad: true,
+                visualizar: true,
+                seleccion: true
+            }
+        };
+
         // Inicializa el total de seleccionados en la vista de consulta
         document.addEventListener('DOMContentLoaded', () => {
              updateTotalSelected();
@@ -838,8 +881,13 @@
              
              dateFields.forEach(field => {
                  if (field && (field.value === 'dd/mm/aaaa' || field.value === '')) {
-                     field.Svalue = formattedDate;
+                     field.value = formattedDate;
                  }
+             });
+             
+             // Ocultar el menú contextual si se hace clic fuera
+             document.addEventListener('click', () => {
+                 document.getElementById('column-context-menu').style.display = 'none';
              });
         });
 
@@ -876,7 +924,6 @@
             const messageP = document.getElementById('error-message');
             if (modal && messageP) {
                 messageP.textContent = mensaje;
-                // Añadimos la clase 'active' para mostrarlo con la transición
                 modal.classList.add('active');
             }
         }
@@ -884,7 +931,6 @@
         function cerrarError() {
             const modal = document.getElementById('error-modal');
             if (modal) {
-                // Quitamos la clase 'active' para ocultarlo
                 modal.classList.remove('active');
             }
         }
@@ -901,22 +947,20 @@
             }
 
             if (isNaN(count)) {
-                count = 0; // Tratar NaN como 0
+                count = 0; 
             }
 
             if (count === 0) {
                 mostrarError('Debe seleccionar al menos un cuestionario para habilitar.');
-                return; // Detener ejecución
+                return; 
             }
             
             if (count > 1) {
                 mostrarError('Solo puede habilitar un cuestionario a la vez. Por favor, seleccione solo uno.');
-                return; // Detener ejecución
+                return; 
             }
 
-            // Si count es 1, navegar
             if (count === 1) {
-                // (Opcional: aquí se podría tomar el ID del seleccionado y pasarlo a la vista de habilitación)
                 navigateTo('habilitacion');
             }
         }
@@ -928,16 +972,15 @@
             const finalSection = document.getElementById('final-section');
             const editor = document.getElementById('question-editor');
 
-            editor.style.display = 'none'; // Ocultar editor al cambiar de tipo
+            editor.style.display = 'none'; 
 
             if (type === 'Final') {
                 formativoSection.style.display = 'none';
                 finalSection.style.display = 'flex';
-            } else { // Formativo
+            } else { 
                 formativoSection.style.display = 'block';
                 finalSection.style.display = 'none';
             }
-            // Recalcular total de preguntas seleccionadas
             updateTotalQuestions();
         }
 
@@ -945,7 +988,6 @@
         function updateTotalQuestions(isFinal = false) {
             let selector = '#formativo-section input[type="checkbox"]';
             if (document.getElementById('r-tipo-incremento').value === 'Final' || isFinal) {
-                // En modo Final, contamos los cuestionarios seleccionados como "preguntas" fuente
                 selector = '#final-section input[type="checkbox"]';
             }
             
@@ -959,33 +1001,27 @@
 
             const totalInput = document.getElementById('r-total-preguntas');
             if (totalInput) {
-                // Para el modo formativo, el total es el número de preguntas a crear.
-                // Para el modo final, el total es el número de cuestionarios fuente.
                 totalInput.value = count;
             }
         }
         
         // 5. Lógica para mostrar/ocultar el Editor de Preguntas
-        // MODIFICADO: Lógica de creación dinámica
         function toggleQuestionEditor(cancel = false) {
             const editor = document.getElementById('question-editor');
             const listContainer = document.getElementById('dynamic-question-list');
             const btnCrear = document.getElementById('btnCrear');
             const tipo = document.getElementById('r-tipo-incremento').value;
 
-            // Lógica de CANCELAR o RECARGAR
             if (editor.style.display === 'block' || cancel) {
                  editor.style.display = 'none';
                  btnCrear.textContent = 'Crear';
-                 listContainer.innerHTML = ''; // Limpiar el contenedor
+                 listContainer.innerHTML = ''; 
                  return;
             }
             
-            // --- Lógica de CREAR ---
-            listContainer.innerHTML = ''; // Limpiar siempre antes de crear
+            listContainer.innerHTML = ''; 
 
             if (tipo === 'Formativo') {
-                // 1. Obtener preguntas seleccionadas del banco
                 const selectedQuestions = document.querySelectorAll('#formativo-section input[type="checkbox"]:checked');
                 
                 if (selectedQuestions.length === 0) {
@@ -996,14 +1032,12 @@
                 let questionIndex = 1;
                 selectedQuestions.forEach(chk => {
                     const questionText = chk.dataset.pregunta;
-                    // 2. Generar el HTML para cada pregunta seleccionada
                     const questionHtml = crearHtmlEditorPregunta(questionIndex, questionText, '', false);
                     listContainer.insertAdjacentHTML('beforeend', questionHtml);
                     questionIndex++;
                 });
 
             } else { // tipo === 'Final'
-                // 1. Obtener cuestionarios fuente seleccionados
                 const selectedQuizzes = document.querySelectorAll('#final-section input[type="checkbox"]:checked');
                 
                 if (selectedQuizzes.length === 0) {
@@ -1011,23 +1045,19 @@
                     return;
                 }
                 
-                // 2. Simular la lógica de backend (crear preguntas con tasa de error)
                 listContainer.innerHTML = `<div class="p-2 text-xs text-gray-700" style="margin-bottom: 5px; background-color: #FFF; border: 1px dashed #AAA;"><i><b>Simulación:</b> Creando cuestionario con preguntas de mayor tasa de error de los ${selectedQuizzes.length} cuestionarios fuente seleccionados. El profesor puede revisar y ajustar puntajes.</i></div>`;
                 
-                // Añadir 2-3 preguntas simuladas (el texto es solo lectura)
                 listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(1, "Pregunta Simulada (Error 80%): ¿Qué fue la Revolución Francesa?", "10", true));
                 listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(2, "Pregunta Simulada (Error 65%): Leyes de Newton.", "10", true));
                 listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(3, "Pregunta Simulada (Error 60%): Capital de Argentina.", "5", true));
             }
 
-            // 3. Mostrar el editor y cambiar el botón
             editor.style.display = 'block';
             btnCrear.textContent = 'Recargar Editor';
         }
 
-        // NUEVA FUNCIÓN: Helper para crear el HTML del editor de preguntas
+        // 6. Helper para crear el HTML del editor de preguntas
         function crearHtmlEditorPregunta(index, questionText, puntaje = '', isFinal = false) {
-            // Si es 'Final', la pregunta es solo lectura (simulación)
             const readOnlyAttr = isFinal ? 'readonly class="input-text input-readonly"' : 'class="input-text"';
             const puntajeValue = puntaje || '';
             
@@ -1048,7 +1078,6 @@
                     <input type="text" ${readOnlyAttr} value="${questionText}" style="flex: 1;">
                     <button class="btn-classic">Registrar Imagen</button>
                 </div>
-                <!-- Respuestas para que el profesor llene -->
                 <div class="mt-2 ml-4 p-2 border-l border-dashed border-gray-400">
                     <div class="question-row">
                         <label class="field-label">1. Respuesta:</label>
@@ -1082,25 +1111,146 @@
             `;
         }
         
-        // Inicializar la vista dinámica y el contador
-        window.onload = function() {
-            toggleIncrementType(document.getElementById('r-tipo-incremento').value);
-            updateTotalSelected();
+        // 7. Inicializar la vista dinámica y el contador
+        // (Movido a DOMContentLoaded)
+        
+        // --- AÑADIDO: Lógica de Ordenamiento de Tabla (Click Izquierdo) ---
+        function sortTable(th, colIndex) {
+            const table = document.getElementById('consultar-tabla');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
             
-            // Simular fecha actual en más campos
-             const dateFields = [document.getElementById('r-fecha'), document.getElementById('f-fecha')];
-             const today = new Date();
-             const d = String(today.getDate()).padStart(2, '0');
-             const m = String(today.getMonth() + 1).padStart(2, '0');
-             const y = today.getFullYear();
-             const formattedDate = `${d}/${m}/${y}`;
-             
-             dateFields.forEach(field => {
-                 if (field && (field.value === 'dd/mm/aaaa' || field.value === '')) {
-                     field.value = formattedDate;
-                 }
-             });
-        };
+            // Determinar dirección de orden
+            let currentDir = th.dataset.sortDir || 'desc';
+            let newDir = (currentDir === 'asc') ? 'desc' : 'asc';
+            th.dataset.sortDir = newDir;
+
+            // Quitar clases de orden de otros headers
+            table.querySelectorAll('th.sortable').forEach(h => {
+                h.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            // Añadir clase de orden actual
+            th.classList.add(newDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+            // Lógica de ordenamiento
+            rows.sort((rowA, rowB) => {
+                let valA = rowA.cells[colIndex].textContent.trim();
+                let valB = rowB.cells[colIndex].textContent.trim();
+                
+                // Tratar como números si es 'numero' o 'cantidad'
+                const colName = th.dataset.col;
+                if (colName === 'numero' || colName === 'cantidad') {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                } 
+                // Tratar como fechas (dd/mm/yyyy)
+                else if (colName === 'fecha') {
+                    valA = parseDate(valA);
+                    valB = parseDate(valB);
+                }
+                // String compare (case-insensitive)
+                else {
+                    valA = valA.toLowerCase();
+                    valB = valB.toLowerCase();
+                }
+
+                if (valA < valB) {
+                    return newDir === 'asc' ? -1 : 1;
+                }
+                if (valA > valB) {
+                    return newDir === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+
+            // Re-adjuntar filas
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        // Helper para convertir fecha dd/mm/yyyy a objeto Date
+        function parseDate(dateStr) {
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                // new Date(year, monthIndex, day)
+                return new Date(parts[2], parts[1] - 1, parts[0]);
+            }
+            return new Date(0); // Fecha inválida
+        }
+
+        // --- AÑADIDO: Lógica de Menú Contextual (Click Derecho) ---
+        function showColumnMenu(event) {
+            event.preventDefault(); // Evitar menú del navegador
+            event.stopPropagation(); // Evitar que se cierre solo
+            
+            const menu = document.getElementById('column-context-menu');
+            const menuList = document.getElementById('column-menu-list');
+            
+            // Rellenar menú (solo la primera vez, o si cambia)
+            if (menuList.childElementCount === 0) {
+                const headers = document.querySelectorAll('#consultar-tabla th');
+                headers.forEach(th => {
+                    const colName = th.dataset.col;
+                    const colText = th.querySelector('.th-content span') ? th.querySelector('.th-content span').textContent : th.textContent;
+                    
+                    if (!colName) return; // Si no tiene data-col, no se puede ocultar
+
+                    const li = document.createElement('li');
+                    li.textContent = colText;
+                    li.dataset.col = colName;
+                    
+                    // Marcar si está visible
+                    if (tableState.columnVisibility[colName]) {
+                        li.classList.add('checked');
+                    }
+                    
+                    li.onclick = () => {
+                        toggleColumn(colName);
+                        menu.style.display = 'none'; // Ocultar después de la acción
+                    };
+                    menuList.appendChild(li);
+                });
+            } else {
+                 // Actualizar checks
+                 menuList.querySelectorAll('li').forEach(li => {
+                    const colName = li.dataset.col;
+                    if (tableState.columnVisibility[colName]) {
+                        li.classList.add('checked');
+                    } else {
+                        li.classList.remove('checked');
+                    }
+                 });
+            }
+
+            // Posicionar y mostrar menú
+            const rect = event.currentTarget.getBoundingClientRect();
+            const containerRect = document.getElementById('consultar-view-container').getBoundingClientRect();
+            
+            // Posicionarlo relativo al contenedor de la ventana
+            menu.style.top = (rect.bottom - containerRect.top) + 'px';
+            menu.style.left = (rect.left - containerRect.left) + 'px';
+            menu.style.display = 'block';
+        }
+        
+        function toggleColumn(colName) {
+            const isVisible = tableState.columnVisibility[colName];
+            const newState = !isVisible;
+            tableState.columnVisibility[colName] = newState;
+
+            // Ocultar/Mostrar todas las celdas (th y td) con ese data-col
+            const cells = document.querySelectorAll(`#consultar-tabla [data-col="${colName}"]`);
+            cells.forEach(cell => {
+                if (newState) {
+                    cell.style.display = ''; // Volver al display por defecto
+                    cell.style.opacity = 1;
+                } else {
+                    cell.style.display = 'none'; // Ocultar
+                    cell.style.opacity = 0;
+                }
+            });
+        }
+
+
     </script>
 
 </body>
