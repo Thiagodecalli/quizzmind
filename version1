@@ -18,7 +18,8 @@
         }
         
         /* Contenedor de la ventana de aplicación */
-        #consultar-view-container, #registro-view-container {
+        /* MODIFICADO: Añadido #habilitacion-view-container */
+        #consultar-view-container, #registro-view-container, #habilitacion-view-container {
             font-family: 'Tahoma', 'MS Sans Serif', Arial, sans-serif;
             font-size: 11px;
             background-color: #ECE9D8; /* Color de fondo de ventana clásico */
@@ -83,6 +84,14 @@
             align-items: center;
             gap: 10px;
         }
+        /* Estilo para la leyenda (título del fieldset) */
+        .filter-fieldset legend {
+            font-weight: bold;
+            margin-left: 10px;
+            padding: 0 4px;
+            background-color: #ECE9D8; /* Debe coincidir con el fondo */
+        }
+
         .filter-group {
             display: flex;
             align-items: center;
@@ -102,6 +111,11 @@
         .input-text {
             min-width: 80px;
         }
+        /* Input de solo lectura */
+        .input-readonly {
+             background-color: #F0F0F0;
+        }
+        
         /* Botón clásico */
         .btn-classic {
             font-size: 11px;
@@ -127,6 +141,7 @@
             overflow-y: scroll;
             background-color: #FFFFFF;
             margin-bottom: 10px;
+            width: 100%; /* Asegura que ocupe todo el fieldset */
         }
         table {
             width: 100%;
@@ -189,6 +204,40 @@
             text-align: right;
         }
 
+        /* --- ESTILOS DE MODAL DE ERROR --- */
+        .modal-overlay {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-window {
+            background-color: #ECE9D8;
+            border: 1px solid #000;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.5);
+            width: 350px;
+            font-family: 'Tahoma', Arial, sans-serif;
+            font-size: 11px;
+        }
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+        .modal-body p {
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        /* Usar el footer-bar para el botón */
+        .modal-window .footer-bar {
+            padding: 8px 10px;
+            justify-content: center;
+            background-color: #D6D6C8;
+            border-top: 1px solid #ACA899;
+        }
+
     </style>
 </head>
 <body class="bg-violet-100 font-sans" 
@@ -204,7 +253,7 @@
             <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-10 max-w-xl w-full border border-violet-700">
                 
                 <!-- Logo - Usamos un placeholder seguro ya que la ruta local no es válida -->
-                <img src="C:\Users\Thiago Alejo Decalli\Pictures\quizmind.PNG" alt="Logo QuizzMind" 
+                <img src="https://placehold.co/128x128/8b5cf6/ffffff?text=QM" alt="Logo QuizzMind" 
                      class="h-32 w-32 rounded-full shadow-xl mb-6 mx-auto border-4 border-violet-400">
                 
                 <h1 class="text-5xl font-extrabold text-white mb-4 tracking-wider">QuizMind</h1>
@@ -246,11 +295,13 @@
                 <div class="info-fields">
                     <div class="filter-group">
                         <label for="f-fecha">Fecha:</label>
-                        <input type="text" id="f-fecha" class="input-text" value="dd/mm/aaaa" style="width: 70px;">
+                        <!-- MODIFICADO: Campo de solo lectura -->
+                        <input type="text" id="f-fecha" class="input-text input-readonly" value="dd/mm/aaaa" style="width: 70px;" readonly>
                     </div>
                     <div class="filter-group">
                         <label for="f-usuario">Usuario:</label>
-                        <input type="text" id="f-usuario" class="input-text" value="UsuarioActual" readonly>
+                        <!-- MODIFICADO: Campo de solo lectura -->
+                        <input type="text" id="f-usuario" class="input-text input-readonly" value="UsuarioActual" readonly>
                     </div>
                 </div>
 
@@ -336,7 +387,8 @@
                         <label for="f-total">Total de incrementos seleccionados:</label>
                         <input type="text" id="f-total" class="input-text input-readonly" value="0" readonly style="width: 40px;">
                     </div>
-                    <button class="btn-classic" onclick="handleHabilitacionClick()">Registrar habilitacion de cuestionario incremental</button>
+                    <!-- MODIFICADO: onclick llama a la validación -->
+                    <button class="btn-classic" onclick="validarYHabilitar()">Registrar habilitación de cuestionario incremental</button>
                 </div>
 
                 <!-- Barra de Pie de página -->
@@ -350,13 +402,14 @@
             </div>
         </div>
     </div>	
-   
+
+
     <!-- VISTA DE REGISTRO (Registro nuevo cuestionario incremental) -->
     <div id="registro-view" class="view">
         
         <!-- Botón para volver al inicio -->
         <div class="text-center mt-4">
-             <button onclick="navigateTo('inicio')" class="text-sm text-violet-600 hover:underline">&larr; Volver al Inicio</button>
+             <button onclick="navigateTo('consultar')" class="text-sm text-violet-600 hover:underline">&larr; Volver a Consultar</button>
         </div>
         
         <div id="registro-view-container">
@@ -375,11 +428,13 @@
                 <div class="info-fields">
                     <div class="filter-group">
                         <label for="r-fecha">Fecha:</label>
-                        <input type="text" id="r-fecha" class="input-text" value="dd/mm/aaaa" style="width: 70px;">
+                        <!-- MODIFICADO: Campo de solo lectura -->
+                        <input type="text" id="r-fecha" class="input-text input-readonly" value="dd/mm/aaaa" style="width: 70px;" readonly>
                     </div>
                     <div class="filter-group">
                         <label for="r-usuario">Usuario:</label>
-                        <input type="text" id="r-usuario" class="input-text" value="UsuarioActual" readonly>
+                        <!-- MODIFICADO: Campo de solo lectura -->
+                        <input type="text" id="r-usuario" class="input-text input-readonly" value="UsuarioActual" readonly>
                     </div>
                 </div>
 
@@ -439,11 +494,12 @@
                                     </thead>
                                     <tbody id="bank-questions-body">
                                         <!-- Preguntas de ejemplo Formativo -->
-                                        <tr><td>1</td> <td>¿Qué es la dilatación térmica?</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions()"></td></tr>
-                                        <tr><td>2</td> <td>Defina el Teorema de Pitágoras.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions()"></td></tr>
-                                        <tr><td>3</td> <td>Leyes de Newton.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions()"></td></tr>
-                                        <tr><td>4</td> <td>¿Qué fue la Revolución Francesa?</td> <td>Inactivo</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions()"></td></tr>
-                                        <tr><td>5</td> <td>Capital de Argentina.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" onchange="updateTotalQuestions()"></td></tr>
+                                        <!-- MODIFICADO: Añadidos data-attributes a los checkbox -->
+                                        <tr><td>1</td> <td>¿Qué es la dilatación térmica?</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="1" data-pregunta="¿Qué es la dilatación térmica?" onchange="updateTotalQuestions()"></td></tr>
+                                        <tr><td>2</td> <td>Defina el Teorema de Pitágoras.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="2" data-pregunta="Defina el Teorema de Pitágoras." onchange="updateTotalQuestions()"></td></tr>
+                                        <tr><td>3</td> <td>Leyes de Newton.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="3" data-pregunta="Leyes de Newton." onchange="updateTotalQuestions()"></td></tr>
+                                        <tr><td>4</td> <td>¿Qué fue la Revolución Francesa?</td> <td>Inactivo</td> <td class="col-seleccion"><input type="checkbox" data-numero="4" data-pregunta="¿Qué fue la Revolución Francesa?" onchange="updateTotalQuestions()"></td></tr>
+                                        <tr><td>5</td> <td>Capital de Argentina.</td> <td>Activo</td> <td class="col-seleccion"><input type="checkbox" data-numero="5" data-pregunta="Capital de Argentina." onchange="updateTotalQuestions()"></td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -486,7 +542,7 @@
                         <div class="flex gap-10 items-center">
                             <div class="filter-group">
                                 <label for="r-total-preguntas">Total preguntas seleccionadas:</label>
-                                <input type="text" id="r-total-preguntas" class="input-text" value="0" readonly style="width: 40px; background-color: #F0F0F0;">
+                                <input type="text" id="r-total-preguntas" class="input-text input-readonly" value="0" readonly style="width: 40px; background-color: #F0F0F0;">
                             </div>
                         </div>
                         
@@ -519,112 +575,13 @@
 
 
                     <!-- ÁREA DE EDICIÓN DE PREGUNTAS (Visible solo tras "Crear") -->
-                    <div id="question-editor" class="question-editor-container" style="display:none; max-height: 400px; overflow-y: auto;">
+                    <!-- MODIFICADO: Se quitan las preguntas estáticas y se añade un contenedor dinámico -->
+                    <div id="question-editor" class="question-editor-container" style="display:none;">
                         <div class="font-bold text-base mb-2">Detalle de Preguntas Generadas:</div>
                         
-                        <!-- PREGUNTA 2 (Simulada para el modo Formativo) -->
-                        <div class="question-item border p-2 mb-3 bg-white">
-                             <div class="question-row-header">
-                                 <div class="flex gap-2">
-                                     <label for="p9-num" style="width: 100px;">Número Pregunta:</label>
-                                     <input type="text" id="p1-num" class="input-text" value="1" style="width: 30px;" readonly>
-                                     
-                                     <label for="p1-obligatorio">Obligatorio:</label>
-                                     <input type="checkbox" id="p1-obligatorio" checked>
-                                     
-                                     <label for="p1-puntaje" style="margin-left: 20px;">Puntaje:</label>
-                                     <input type="text" id="p1-puntaje" class="input-text" style="width: 40px;">
-                                 </div>
-                             </div>
-                            <div class="question-row mt-2">
-                                <label for="p1-nombre" style="width: 150px;">Nombre Pregunta:</label>
-                                <input type="text" id="p1-nombre" class="input-text flex-1" value="¿Qué es la dilatación térmica?">
-                                <button class="btn-classic">Registrar Imagen</button>
-                            </div>
-
-                            <!-- RESPUESTAS (Aquí el profesor ingresa los datos) -->
-                            <div class="mt-2 ml-4 p-2 border-l border-dashed border-gray-400">
-                                <div class="question-row">
-                                    <label class="field-label">1. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox" checked>
-                                </div>
-                                <div class="question-row">
-                                    <label class="field-label">2. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox">
-                                </div>
-                                <div class="question-row">
-                                    <label class="field-label">n. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox">
-                                </div>
-                            </div>
-                        </div>
-		
-                
-			<!-- PREGUNTA n (Simulada para el modo Formativo) -->
-                        <div class="question-item border p-2 mb-3 bg-white">
-                             <div class="question-row-header">
-                                 <div class="flex gap-2">
-                                     <label for="p1-num" style="width: 100px;">Número Pregunta:</label>
-                                     <input type="text" id="p2-num" class="input-text" value="n" style="width: 30px;" readonly>
-                                     
-                                     <label for="p1-obligatorio">Obligatorio:</label>
-                                     <input type="checkbox" id="p1-obligatorio" checked>
-                                     
-                                     <label for="p1-puntaje" style="margin-left: 20px;">Puntaje:</label>
-                                     <input type="text" id="p1-puntaje" class="input-text" style="width: 40px;">
-                                 </div>
-                             </div>
-                            <div class="question-row mt-2">
-                                <label for="p1-nombre" style="width: 150px;">Nombre Pregunta:</label>
-                                <input type="text" id="p1-nombre" class="input-text flex-1" value="Defina el Teorema de Pitágoras.">
-                                <button class="btn-classic">Registrar Imagen</button>
-                            </div>
-
-                            <!-- RESPUESTAS (Aquí el profesor ingresa los datos) -->
-                            <div class="mt-2 ml-4 p-2 border-l border-dashed border-gray-400">
-                                <div class="question-row">
-                                    <label class="field-label">1. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox" checked>
-                                </div>
-                                <div class="question-row">
-                                    <label class="field-label">2. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox">
-                                </div>
-                                <div class="question-row">
-                                    <label class="field-label">n. Respuesta:</label>
-                                    <input type="text" class="input-text flex-1" value="">
-                                    <label>Porcentaje:</label>
-                                    <input type="text" class="input-text" style="width: 40px;">%
-                                    <label>Retro:</label>
-                                    <input type="text" class="input-text flex-1">
-                                    <input type="checkbox">
-                                </div>
-                            </div>
+                        <!-- El contenido se generará dinámicamente aquí -->
+                        <div id="dynamic-question-list" style="max-height: 350px; overflow-y: auto; padding-right: 5px; border: 1px solid #C0C0C0; padding: 5px; background-color: #F8F8F0;">
+                            <!-- Las preguntas generadas por JS irán aquí -->
                         </div>
 
                         <!-- Botones de Acción -->
@@ -646,7 +603,156 @@
             </div>
         </div>
     </div>
+
+
+    <!-- VISTA DE HABILITACIÓN (NUEVA) -->
+    <div id="habilitacion-view" class="view">
+        
+        <!-- Botón para volver al inicio -->
+        <div class="text-center mt-4">
+             <button onclick="navigateTo('consultar')" class="text-sm text-violet-600 hover:underline">&larr; Volver a Consultar</button>
+        </div>
+        
+        <!-- Contenedor de la Ventana -->
+        <div id="habilitacion-view-container">
+            <!-- Barra de Título -->
+            <div class="window-title-bar">
+                <h1>Registrar habilitación de cuestionario incremental</h1>
+                <div class="window-controls">
+                    <span>_</span><span>&#9633;</span><span>X</span>
+                </div>
+            </div>
+
+            <!-- Cuerpo de la Ventana -->
+            <div class="window-body">
+                
+                <!-- 1. Cuestionario Seleccionado -->
+                <fieldset class="filter-fieldset">
+                    <legend>Cuestionario seleccionado</legend>
+                    <div class="filter-group">
+                        <label>Cuestionario:</label>
+                        <input type="text" class="input-text input-readonly" value="1001" readonly style="width: 50px;">
+                    </div>
+                    <div class="filter-group">
+                        <label>Materia:</label>
+                        <input type="text" class="input-text input-readonly" value="Materia Ejemplo" readonly style="width: 150px;">
+                    </div>
+                     <div class="filter-group">
+                        <label>Unidad:</label>
+                        <input type="text" class="input-text input-readonly" value="U-01" readonly style="width: 40px;">
+                    </div>
+                </fieldset>
+
+                <!-- Contenedor de dos columnas (Flex) -->
+                <div class="flex flex-wrap md:flex-nowrap gap-4">
+                
+                    <!-- Columna Izquierda: Configuración General -->
+                    <div class="flex-1 w-full md:w-1/2">
+                        <fieldset class="filter-fieldset" style="height: 100%; flex-direction: column; align-items: flex-start;">
+                            <legend>Configuración General</legend>
+                            <div class="filter-group w-full">
+                                <label for="h-desc" style="align-self: flex-start; margin-top: 4px;">Descripción:</label>
+                                <textarea id="h-desc" class="input-text" style="width: 100%; height: 60px; min-width: 200px;"></textarea>
+                            </div>
+                            <div class="filter-group w-full mt-2" style="flex-wrap: wrap;">
+                                <input type="checkbox" id="h-req-pass" onchange="document.getElementById('h-pass').disabled = !this.checked; document.getElementById('h-pass').classList.toggle('input-readonly', !this.checked);">
+                                <label for="h-req-pass">Requiere Contraseña:</label>
+                                <label for="h-pass" style="margin-left: 10px;">Contraseña:</label>
+                                <input type="password" id="h-pass" class="input-text input-readonly" style="width: 120px;" disabled>
+                            </div>
+                        </fieldset>
+                    </div>
+                    
+                    <!-- Columna Derecha: Detalles y Validez -->
+                    <div class="flex-1 w-full md:w-1/2 flex flex-col gap-3">
+                        <fieldset class="filter-fieldset" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <legend>Detalles de Habilitación</legend>
+                            <div class="filter-group">
+                                <label style="width: 110px;">Usuario que habilita:</label>
+                                <input type="text" class="input-text input-readonly" value="AdminSystem" readonly>
+                            </div>
+                            <div class="filter-group">
+                                <label style="width: 110px;">Fecha de Habilitación:</label>
+                                <input type="text" class="input-text" value="13/11/2025" style="width: 80px;"> <!-- Simular datepicker -->
+                            </div>
+                             <div class="filter-group">
+                                <label style="width: 110px;">Horario Habilitación:</label>
+                                <input type="text" class="input-text" value="09:00" style="width: 50px;"> <!-- Simular timepicker -->
+                            </div>
+                        </fieldset>
+                        
+                        <fieldset class="filter-fieldset" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <legend>Periodo de validez</legend>
+                            <div class="filter-group">
+                                <label style="width: 110px;">Fecha de caducidad:</label>
+                                <input type="text" class="input-text" value="20/11/2025" style="width: 80px;">
+                            </div>
+                             <div class="filter-group">
+                                <label style="width: 110px;">Horario de caducidad:</label>
+                                <input type="text" class="input-text" value="23:59" style="width: 50px;">
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <!-- 3. Preguntas del cuestionario -->
+                 <fieldset class="filter-fieldset mt-3" style="flex-direction: column;">
+                    <legend>Preguntas del cuestionario</legend>
+                    <div class="table-container" style="max-height: 200px; margin-bottom: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ítem</th>
+                                    <th>Pregunta</th>
+                                    <th>Respuesta</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Datos de ejemplo de la imagen -->
+                                <tr><td>1</td><td>¿Qué es el Big Bang?</td><td>Expansión inicial del universo.</td><td>Activa</td></tr>
+                                <tr><td>2</td><td>Capital de Chile.</td><td>Santiago.</td><td>Activa</td></tr>
+                                <tr><td>3</td><td>Fórmula del agua.</td><td>H2O</td><td>Activa</td></tr>
+                                <tr><td>4</td><td>¿Quién escribió El Quijote?</td><td>Miguel de Cervantes</td><td>Activa</td></tr>
+                                <tr><td>5</td><td>¿Cuántos huesos tiene el cuerpo humano adulto?</td><td>206</td><td>Activa</td></tr>
+                                <tr><td>6</td><td>¿Qué es la fotosíntesis?</td><td>Proceso vegetal...</td><td>Activa</td></tr>
+                                 <tr><td>7</td><td>(Pregunta de ejemplo)</td><td>(Respuesta de ejemplo)</td><td>Activa</td></tr>
+                                <tr><td>8</td><td>(Pregunta de ejemplo)</td><td>(Respuesta de ejemplo)</td><td>Activa</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+
+                <!-- Barra de Pie de página -->
+                <div class="footer-bar">
+                    <button class="btn-classic" onclick="navigateTo('consultar')">Cancelar</button>
+                    <button class="btn-classic" style="font-weight: bold;">Registrar confirmacion de habilitacion de cuestionario incremental</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
    
+    <!-- MODAL DE ERROR (NUEVO) -->
+    <div id="error-modal" class="modal-overlay">
+        <div class="modal-window">
+            <!-- Barra de Título (simulada) -->
+            <div class="window-title-bar">
+                <h1>Error de validación</h1>
+                <div class="window-controls">
+                    <span>X</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p id="error-message">Mensaje de error irá aquí.</p>
+                <div class="footer-bar" style="border-top: none;">
+                    <button class="btn-classic" onclick="cerrarError()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
      
     <!-- JavaScript para Lógica de Vistas y Dinámicas -->
     <script>
@@ -654,14 +760,18 @@
         document.addEventListener('DOMContentLoaded', () => {
              updateTotalSelected();
              // Asignar fecha actual al campo de registro (simulado)
-             const dateField = document.getElementById('r-fecha');
-             if (dateField) {
-                 const today = new Date();
-                 const d = String(today.getDate()).padStart(2, '0');
-                 const m = String(today.getMonth() + 1).padStart(2, '0');
-                 const y = today.getFullYear();
-                 dateField.value = `${d}/${m}/${y}`;
-             }
+             const dateFields = [document.getElementById('r-fecha'), document.getElementById('f-fecha')];
+             const today = new Date();
+             const d = String(today.getDate()).padStart(2, '0');
+             const m = String(today.getMonth() + 1).padStart(2, '0');
+             const y = today.getFullYear();
+             const formattedDate = `${d}/${m}/${y}`;
+             
+             dateFields.forEach(field => {
+                 if (field && (field.value === 'dd/mm/aaaa' || field.value === '')) {
+                     field.value = formattedDate;
+                 }
+             });
         });
 
         // 1. Lógica de Navegación de Vistas
@@ -690,6 +800,56 @@
                 totalInput.value = count;
             }
         }
+
+        // --- NUEVAS FUNCIONES PARA MODAL DE ERROR ---
+        function mostrarError(mensaje) {
+            const modal = document.getElementById('error-modal');
+            const messageP = document.getElementById('error-message');
+            if (modal && messageP) {
+                messageP.textContent = mensaje;
+                modal.style.display = 'flex'; // Usamos flex para centrar
+            }
+        }
+
+        function cerrarError() {
+            const modal = document.getElementById('error-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        // --- FIN DE FUNCIONES DE MODAL ---
+
+
+        // --- NUEVA FUNCIÓN DE VALIDACIÓN (HABILITACIÓN) ---
+        function validarYHabilitar() {
+            const totalInput = document.getElementById('f-total');
+            let count = 0;
+            
+            if (totalInput) {
+                count = parseInt(totalInput.value, 10);
+            }
+
+            if (isNaN(count)) {
+                count = 0; // Tratar NaN como 0
+            }
+
+            if (count === 0) {
+                mostrarError('Debe seleccionar al menos un cuestionario para habilitar.');
+                return; // Detener ejecución
+            }
+            
+            if (count > 1) {
+                mostrarError('Solo puede habilitar un cuestionario a la vez. Por favor, seleccione solo uno.');
+                return; // Detener ejecución
+            }
+
+            // Si count es 1, navegar
+            if (count === 1) {
+                // (Opcional: aquí se podría tomar el ID del seleccionado y pasarlo a la vista de habilitación)
+                navigateTo('habilitacion');
+            }
+        }
+
 
         // 3. Lógica dinámica para la vista de REGISTRO (Formativo vs. Final)
         function toggleIncrementType(type) {
@@ -735,27 +895,140 @@
         }
         
         // 5. Lógica para mostrar/ocultar el Editor de Preguntas
+        // MODIFICADO: Lógica de creación dinámica
         function toggleQuestionEditor(cancel = false) {
             const editor = document.getElementById('question-editor');
-            
-            if (editor.style.display === 'none' && !cancel) {
-                // Lógica de CREAR (simulada): Muestra el editor
-                // Nota: Aquí iría la lógica backend para:
-                // 1.  Si es Final: Generar preguntas con mayor error y cargarlas en el editor.
-                // 2.  Si es Formativo: Tomar las preguntas del banco y cargarlas en el editor para que el profe ponga las respuestas/retro.
-                editor.style.display = 'block';
-                document.getElementById('btnCrear').textContent = 'Recargar Editor';
-            } else if (editor.style.display === 'block' || cancel) {
-                // Lógica de CANCELAR/OCULTAR
+            const listContainer = document.getElementById('dynamic-question-list');
+            const btnCrear = document.getElementById('btnCrear');
+            const tipo = document.getElementById('r-tipo-incremento').value;
+
+            // Lógica de CANCELAR o RECARGAR
+            if (editor.style.display === 'block' || cancel) {
                  editor.style.display = 'none';
-                 document.getElementById('btnCrear').textContent = 'Crear';
+                 btnCrear.textContent = 'Crear';
+                 listContainer.innerHTML = ''; // Limpiar el contenedor
+                 return;
             }
+            
+            // --- Lógica de CREAR ---
+            listContainer.innerHTML = ''; // Limpiar siempre antes de crear
+
+            if (tipo === 'Formativo') {
+                // 1. Obtener preguntas seleccionadas del banco
+                const selectedQuestions = document.querySelectorAll('#formativo-section input[type="checkbox"]:checked');
+                
+                if (selectedQuestions.length === 0) {
+                    mostrarError('Debe seleccionar al menos una pregunta del banco para crear un cuestionario formativo.');
+                    return;
+                }
+
+                let questionIndex = 1;
+                selectedQuestions.forEach(chk => {
+                    const questionText = chk.dataset.pregunta;
+                    // 2. Generar el HTML para cada pregunta seleccionada
+                    const questionHtml = crearHtmlEditorPregunta(questionIndex, questionText, '', false);
+                    listContainer.insertAdjacentHTML('beforeend', questionHtml);
+                    questionIndex++;
+                });
+
+            } else { // tipo === 'Final'
+                // 1. Obtener cuestionarios fuente seleccionados
+                const selectedQuizzes = document.querySelectorAll('#final-section input[type="checkbox"]:checked');
+                
+                if (selectedQuizzes.length === 0) {
+                    mostrarError('Debe seleccionar al menos un cuestionario completado como fuente para el tipo "Final".');
+                    return;
+                }
+                
+                // 2. Simular la lógica de backend (crear preguntas con tasa de error)
+                listContainer.innerHTML = `<div class="p-2 text-xs text-gray-700" style="margin-bottom: 5px; background-color: #FFF; border: 1px dashed #AAA;"><i><b>Simulación:</b> Creando cuestionario con preguntas de mayor tasa de error de los ${selectedQuizzes.length} cuestionarios fuente seleccionados. El profesor puede revisar y ajustar puntajes.</i></div>`;
+                
+                // Añadir 2-3 preguntas simuladas (el texto es solo lectura)
+                listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(1, "Pregunta Simulada (Error 80%): ¿Qué fue la Revolución Francesa?", "10", true));
+                listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(2, "Pregunta Simulada (Error 65%): Leyes de Newton.", "10", true));
+                listContainer.insertAdjacentHTML('beforeend', crearHtmlEditorPregunta(3, "Pregunta Simulada (Error 60%): Capital de Argentina.", "5", true));
+            }
+
+            // 3. Mostrar el editor y cambiar el botón
+            editor.style.display = 'block';
+            btnCrear.textContent = 'Recargar Editor';
+        }
+
+        // NUEVA FUNCIÓN: Helper para crear el HTML del editor de preguntas
+        function crearHtmlEditorPregunta(index, questionText, puntaje = '', isFinal = false) {
+            // Si es 'Final', la pregunta es solo lectura (simulación)
+            const readOnlyAttr = isFinal ? 'readonly class="input-text input-readonly"' : 'class="input-text"';
+            const puntajeValue = puntaje || '';
+            
+            return `
+            <div class="question-item border p-2 mb-3 bg-white" style="border: 1px solid #999;">
+                <div class="question-row-header">
+                    <div class="flex gap-2 flex-wrap">
+                        <label style="width: 100px;">Número Pregunta:</label>
+                        <input type="text" class="input-text input-readonly" value="${index}" style="width: 30px;" readonly>
+                        <label>Obligatorio:</label>
+                        <input type="checkbox" checked>
+                        <label style="margin-left: 20px;">Puntaje:</label>
+                        <input type="text" class="input-text" style="width: 40px;" value="${puntajeValue}">
+                    </div>
+                </div>
+                <div class="question-row mt-2">
+                    <label style="width: 150px;">Nombre Pregunta:</label>
+                    <input type="text" ${readOnlyAttr} value="${questionText}" style="flex: 1;">
+                    <button class="btn-classic">Registrar Imagen</button>
+                </div>
+                <!-- Respuestas para que el profesor llene -->
+                <div class="mt-2 ml-4 p-2 border-l border-dashed border-gray-400">
+                    <div class="question-row">
+                        <label class="field-label">1. Respuesta:</label>
+                        <input type="text" class="input-text flex-1" value="">
+                        <label>Porcentaje:</label>
+                        <input type="text" class="input-text" style="width: 40px;">%
+                        <label>Retro:</label>
+                        <input type="text" class="input-text flex-1">
+                        <input type="checkbox">
+                    </div>
+                    <div class="question-row">
+                        <label class="field-label">2. Respuesta:</label>
+                        <input type="text" class="input-text flex-1" value="">
+                        <label>Porcentaje:</label>
+                        <input type="text" class="input-text" style="width: 40px;">%
+                        <label>Retro:</label>
+                        <input type="text" class="input-text flex-1">
+                        <input type="checkbox">
+                    </div>
+                    <div class="question-row">
+                        <label class="field-label" style="font-style: italic;">n. Respuesta:</label>
+                        <input type="text" class="input-text flex-1" value="">
+                        <label>Porcentaje:</label>
+                        <input type="text" class="input-text" style="width: 40px;">%
+                        <label>Retro:</label>
+                        <input type="text" class="input-text flex-1">
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
+            `;
         }
         
         // Inicializar la vista dinámica y el contador
         window.onload = function() {
             toggleIncrementType(document.getElementById('r-tipo-incremento').value);
             updateTotalSelected();
+            
+            // Simular fecha actual en más campos
+             const dateFields = [document.getElementById('r-fecha'), document.getElementById('f-fecha')];
+             const today = new Date();
+             const d = String(today.getDate()).padStart(2, '0');
+             const m = String(today.getMonth() + 1).padStart(2, '0');
+             const y = today.getFullYear();
+             const formattedDate = `${d}/${m}/${y}`;
+             
+             dateFields.forEach(field => {
+                 if (field && (field.value === 'dd/mm/aaaa' || field.value === '')) {
+                     field.value = formattedDate;
+                 }
+             });
         };
     </script>
 
