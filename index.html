@@ -691,7 +691,8 @@
 
                         <div class="flex justify-end gap-2 mt-4">
                             <button class="btn-classic" onclick="toggleQuestionEditor(true)">Cancelar</button>
-                            <button class="btn-classic" style="font-weight: bold; background-color: #B2D8B2;">Confirmar</button>
+                            <!-- CAMBIO: Añadido onclick="confirmarEdicion()" -->
+                            <button class="btn-classic" style="font-weight: bold; background-color: #B2D8B2;" onclick="confirmarEdicion()">Confirmar</button>
                         </div>
                     </div>
 
@@ -934,6 +935,15 @@
             const modal = document.getElementById('error-modal');
             if (modal) {
                 modal.classList.remove('active');
+                
+                // --- AÑADIDO: Resetear el título del modal ---
+                const title = modal.querySelector('h2');
+                if (title) {
+                    title.textContent = 'Error de Validación';
+                    title.classList.remove('text-green-300'); // Quitar verde si estuviera
+                    title.classList.add('text-violet-300'); // Asegurar color de error
+                }
+                // --- FIN DEL AÑADIDO ---
             }
         }
         // --- FIN DE FUNCIONES DE MODAL ---
@@ -1096,6 +1106,11 @@
 
         // Helper para crear el HTML de una fila de respuesta
         function crearHtmlFilaRespuesta(index) {
+            // Define el botón de eliminar. No se añade si es la fila 1.
+            const deleteButtonHtml = index > 1 
+                ? `<button class="btn-classic" style="font-size: 10px; padding: 0 4px; background-color: #F0D0D0; border-color: #C0A0A0;" onclick="eliminarRespuesta(this)">X</button>`
+                : '<span style="width: 25px;"></span>'; // Espaciador para alinear
+
             return `
             <div class="question-row">
                 <label class="field-label">${index}. Respuesta:</label>
@@ -1105,6 +1120,8 @@
                 <label>Retro:</label>
                 <input type="text" class="input-text flex-1">
                 <input type="checkbox">
+                <!-- CAMBIO: Añadido botón de eliminar (o espaciador) -->
+                ${deleteButtonHtml}
             </div>
             `;
         }
@@ -1116,6 +1133,54 @@
             const newRowHtml = crearHtmlFilaRespuesta(newIndex);
             respuestasContainer.insertAdjacentHTML('beforeend', newRowHtml);
         }
+
+        // --- AÑADIDO: Funciones para eliminar y renumerar respuestas ---
+        function eliminarRespuesta(button) {
+            const row = button.closest('.question-row');
+            const container = row.closest('.respuestas-container');
+            
+            // No permitir eliminar si es la última fila
+            if (container.children.length <= 1) {
+                mostrarError('Debe haber al menos una respuesta.');
+                return;
+            }
+            
+            row.remove(); // Elimina la fila
+            
+            // Renumera las filas restantes
+            renumerarRespuestas(container);
+        }
+
+        function renumerarRespuestas(container) {
+            const rows = container.querySelectorAll('.question-row');
+            rows.forEach((row, index) => {
+                const label = row.querySelector('.field-label');
+                if (label) {
+                    label.textContent = `${index + 1}. Respuesta:`;
+                }
+                
+                // Actualiza el botón de eliminar (ocultándolo para la fila 1)
+                let deleteButton = row.querySelector('button.btn-classic');
+                if (index === 0) {
+                    // Si hay un botón en la (nueva) fila 1, reemplazarlo por un espaciador
+                    if (deleteButton) {
+                        deleteButton.outerHTML = '<span style="width: 25px;"></span>';
+                    }
+                } else {
+                    // Si no hay botón en las filas > 1 (porque era la fila 1), crearlo
+                    if (!deleteButton) {
+                        // Quita el espaciador (si existe) y añade el botón
+                        const spacer = row.querySelector('span[style*="width: 25px"]');
+                        if(spacer) spacer.remove();
+                        
+                        const buttonHtml = `<button class="btn-classic" style="font-size: 10px; padding: 0 4px; background-color: #F0D0D0; border-color: #C0A0A0;" onclick="eliminarRespuesta(this)">X</button>`;
+                        row.insertAdjacentHTML('beforeend', buttonHtml);
+                    }
+                }
+            });
+        }
+        // --- FIN DEL AÑADIDO ---
+
 
         // Valida que los puntajes no excedan el total
         function validarPuntajes(inputPuntaje) {
@@ -1151,6 +1216,27 @@
                 mostrarError(`El puntaje asignado (${valorInputActual}) excede el límite. Solo quedan ${puntajeRestante} puntos disponibles de la Calificación Total de ${limiteTotal}.`);
                 inputPuntaje.value = puntajeRestante < 0 ? 0 : puntajeRestante;
             }
+        }
+        
+        // --- AÑADIDO: Función para el botón Confirmar Edición ---
+        function confirmarEdicion() {
+            const modal = document.getElementById('error-modal');
+            const title = modal.querySelector('h2');
+            const messageP = document.getElementById('error-message');
+            
+            if (title) {
+                title.textContent = 'Confirmación';
+                title.classList.remove('text-violet-300');
+                title.classList.add('text-green-300'); // Color verde
+            }
+            if (messageP) {
+                messageP.textContent = 'Edición de preguntas confirmada exitosamente.';
+            }
+            
+            modal.classList.add('active');
+            
+            // Opcional: Ocultar el editor después de confirmar
+            // toggleQuestionEditor(true); 
         }
         
         // 7. Inicializar la vista dinámica y el contador
