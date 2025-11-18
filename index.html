@@ -204,6 +204,31 @@
             text-align: right;
         }
 
+        /* --- NUEVO: Estilos de Fondo Dinámico --- */
+        @keyframes dynamicBackground {
+            0% {
+                background-position: 50% 50%;
+                background-size: 100% 100%;
+            }
+            50% {
+                background-position: 40% 60%;
+                background-size: 110% 110%; /* Zoom suave */
+            }
+            100% {
+                background-position: 50% 50%;
+                background-size: 100% 100%;
+            }
+        }
+        .dynamic-bg {
+            background-image: url('https://www.shutterstock.com/image-illustration/ai-brain-artificial-intelligence-neural-600nw-2614012815.jpg'); 
+            background-size: 100% 100%; 
+            background-position: center; 
+            background-attachment: fixed;
+            /* Aplicar la animación: 40s de duración, suave, infinita */
+            animation: dynamicBackground 40s ease-in-out infinite;
+        }
+        /* --- FIN DE ESTILOS DE FONDO --- */
+
         /* --- ESTILOS DE MODAL DE ERROR --- */
         .modal-overlay {
             display: none; /* Oculto por defecto */
@@ -238,34 +263,68 @@
             border-top: 1px solid #ACA899;
         }
 
+        /* --- NUEVO: Animación de entrada (Fade-in) --- */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px); /* Sutilmente desde abajo */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in-card {
+            /* Aplica la animación */
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
     </style>
 </head>
-<body class="bg-violet-100 font-sans" 
-    style="background-image: url('https://www.shutterstock.com/image-illustration/ai-brain-artificial-intelligence-neural-600nw-2614012815.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;">
+<!-- MODIFICADO: Eliminado el 'style' en línea y añadida la clase 'dynamic-bg' -->
+<body class="bg-violet-100 font-sans dynamic-bg">
 
     
 <!-- VISTA DE INICIO (Simple) -->
     <div id="inicio-view" class="view active">
         <div class="min-h-screen flex flex-col items-center justify-center text-center p-8">
-            <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-10 max-w-xl w-full border border-violet-700">
+            <!-- 
+                MODIFICADO: 
+                - Vuelve a tener el padding 'p-10'
+                - Eliminado 'overflow-hidden' de este contenedor
+            -->
+            <div class="bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-2xl p-10 max-w-xl w-full border border-violet-700 fade-in-card">
                 
-                <!-- Logo - Usamos un placeholder seguro ya que la ruta local no es válida -->
-                <img src="https://github.com/Thiagodecalli/quizzmind/blob/main/imagenproyecto.png" 
-                     class="h-32 w-32 rounded-full shadow-xl mb-6 mx-auto border-4 border-violet-400">
+                <!-- 
+                    MODIFICADO: Logo circular 
+                    - Se re-introduce el logo circular, centrado (mx-auto)
+                    - Se coloca antes del H1 (título)
+                -->
+                <div class="h-32 w-32 rounded-full shadow-xl mb-6 mx-auto border-4 border-violet-400 bg-gray-900 overflow-hidden">
+                    <!-- MODIFICADO: Corregida la URL (faltaban los dos puntos //) -->
+                    <img src="https://raw.githubusercontent.com/Thiagodecalli/quizzmind/main/imagenproyecto.png" alt="Logo QuizMind" class="w-full h-full object-cover">
+                </div>
                 
-                <h1 class="text-5xl font-extrabold text-white mb-4 tracking-wider">QuizMind</h1>
+                <!-- MODIFICADO: Título con gradiente -->
+                <h1 class="text-5xl font-extrabold mb-4 tracking-wider bg-gradient-to-r from-violet-400 to-purple-300 text-transparent bg-clip-text">QuizzMind</h1>
                 <p class="text-lg text-violet-200 mb-10 max-w-md mx-auto">
                     Un Cambio en el estudio haciéndolo un poco más autodidacta y mejorando la medida de 
                     efectividad que tiene nuestro aprendizaje.
                 </p>
                 
                 <button onclick="navigateTo('consultar')" 
-                        class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 text-lg uppercase tracking-wider focus:outline-none focus:ring-4 focus:ring-violet-300">
-                    Consultar Cuestionarios Incrementales
+                        class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 text-lg uppercase tracking-wider focus:outline-none focus:ring-4 focus:ring-violet-300
+                               inline-flex items-center justify-center"> <!-- MODIFICADO: Clases flex añadidas -->
+                    <!-- MODIFICADO: Contenido del botón con icono SVG -->
+                    <span class="inline-flex items-center">
+                        Consultar Cuestionarios Incrementales
+                        <!-- Icono de flecha (SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 ml-3">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+                        </svg>
+                    </span>
                 </button>
+
             </div>
         </div>
     </div>
