@@ -697,10 +697,12 @@
 
                 </div>
                 
+                <!-- /// --- CAMBIO REALIZADO AQUÍ --- /// -->
                 <div class="footer-bar mt-4">
-                    <button class="btn-classic" onclick="navigateTo('inicio')">Salir</button>
+                    <button class="btn-classic" onclick="navigateTo('consultar')">Cancelar</button>
                     <button class="btn-classic" style="font-weight: bold;">confirmar registracion nuevo cuestionario incremental</button>
                 </div>
+                <!-- /// --- FIN DEL CAMBIO --- /// -->
 
             </div>
         </div>
@@ -1070,7 +1072,8 @@
                         <label>Obligatorio:</label>
                         <input type="checkbox" checked>
                         <label style="margin-left: 20px;">Puntaje:</label>
-                        <input type="text" class="input-text" style="width: 40px;" value="${puntajeValue}">
+                        <!-- CAMBIO: class y oninput añadidos -->
+                        <input type="text" class="input-text input-puntaje" style="width: 40px;" value="${puntajeValue}" oninput="validarPuntajes(this)">
                     </div>
                 </div>
                 <div class="question-row mt-2">
@@ -1078,37 +1081,76 @@
                     <input type="text" ${readOnlyAttr} value="${questionText}" style="flex: 1;">
                     <button class="btn-classic">Registrar Imagen</button>
                 </div>
+                <!-- CAMBIO: Lógica de respuestas dinámica -->
                 <div class="mt-2 ml-4 p-2 border-l border-dashed border-gray-400">
-                    <div class="question-row">
-                        <label class="field-label">1. Respuesta:</label>
-                        <input type="text" class="input-text flex-1" value="">
-                        <label>Porcentaje:</label>
-                        <input type="text" class="input-text" style="width: 40px;">%
-                        <label>Retro:</label>
-                        <input type="text" class="input-text flex-1">
-                        <input type="checkbox">
+                    <div class="respuestas-container">
+                        ${crearHtmlFilaRespuesta(1)} <!-- Genera la primera respuesta -->
                     </div>
-                    <div class="question-row">
-                        <label class="field-label">2. Respuesta:</label>
-                        <input type="text" class="input-text flex-1" value="">
-                        <label>Porcentaje:</label>
-                        <input type="text" class="input-text" style="width: 40px;">%
-                        <label>Retro:</label>
-                        <input type="text" class="input-text flex-1">
-                        <input type="checkbox">
-                    </div>
-                    <div class="question-row">
-                        <label class="field-label" style="font-style: italic;">n. Respuesta:</label>
-                        <input type="text" class="input-text flex-1" value="">
-                        <label>Porcentaje:</label>
-                        <input type="text" class="input-text" style="width: 40px;">%
-                        <label>Retro:</label>
-                        <input type="text" class="input-text flex-1">
-                        <input type="checkbox">
-                    </div>
+                    <button class="btn-classic" style="font-size: 10px; padding: 1px 5px; margin-left: 85px; margin-top: 5px;" onclick="agregarRespuesta(this)">Añadir respuesta</button>
                 </div>
             </div>
             `;
+        }
+        
+        // --- AÑADIDO: Lógica de Editor de Preguntas Dinámico ---
+
+        // Helper para crear el HTML de una fila de respuesta
+        function crearHtmlFilaRespuesta(index) {
+            return `
+            <div class="question-row">
+                <label class="field-label">${index}. Respuesta:</label>
+                <input type="text" class="input-text flex-1" value="">
+                <label>Porcentaje:</label>
+                <input type="text" class="input-text" style="width: 40px;">%
+                <label>Retro:</label>
+                <input type="text" class="input-text flex-1">
+                <input type="checkbox">
+            </div>
+            `;
+        }
+
+        // Añade una nueva fila de respuesta
+        function agregarRespuesta(button) {
+            const respuestasContainer = button.previousElementSibling; // El .respuestas-container
+            const newIndex = respuestasContainer.children.length + 1;
+            const newRowHtml = crearHtmlFilaRespuesta(newIndex);
+            respuestasContainer.insertAdjacentHTML('beforeend', newRowHtml);
+        }
+
+        // Valida que los puntajes no excedan el total
+        function validarPuntajes(inputPuntaje) {
+            const limiteTotalInput = document.getElementById('r-calif-total');
+            let limiteTotal = parseFloat(limiteTotalInput.value);
+            let valorInputActual = parseFloat(inputPuntaje.value) || 0;
+
+            // Permitir borrar el campo (valor 0) sin mostrar error de "definir calificación"
+            if (isNaN(limiteTotal) || limiteTotal <= 0) {
+                if (valorInputActual > 0) { // Solo muestra error si intentan poner un valor > 0
+                    mostrarError('Por favor, defina una "Calificación Total" válida (mayor a 0) antes de asignar puntajes a las preguntas.');
+                    inputPuntaje.value = '';
+                }
+                return;
+            }
+
+            const editor = document.getElementById('question-editor');
+            const todosLosInputsPuntaje = editor.querySelectorAll('.input-puntaje');
+            
+            let sumaParcial = 0; // Suma de todos *menos* el input actual
+            todosLosInputsPuntaje.forEach(input => {
+                if (input !== inputPuntaje) {
+                    sumaParcial += parseFloat(input.value) || 0;
+                }
+            });
+
+            let puntajeRestante = limiteTotal - sumaParcial;
+
+            // Redondear para evitar problemas de punto flotante
+            puntajeRestante = parseFloat(puntajeRestante.toFixed(2));
+
+            if (valorInputActual > puntajeRestante) {
+                mostrarError(`El puntaje asignado (${valorInputActual}) excede el límite. Solo quedan ${puntajeRestante} puntos disponibles de la Calificación Total de ${limiteTotal}.`);
+                inputPuntaje.value = puntajeRestante < 0 ? 0 : puntajeRestante;
+            }
         }
         
         // 7. Inicializar la vista dinámica y el contador
